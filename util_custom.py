@@ -1,7 +1,5 @@
-from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from tqdm import tqdm
 import sys
 from datetime import datetime
 from datetime import timedelta
@@ -60,7 +58,7 @@ plt.rc('axes', labelsize=16)        # fontsize of the x and y labels
 plt.rc('xtick', labelsize=12)       # fontsize of the tick labels
 plt.rc('ytick', labelsize=12)       # fontsize of the tick labels
 plt.rc('legend', fontsize=20)       # legend fontsize
-plt.rc('figure', titlesize=18)      # fontsize of the figure title
+#plt.rc('figure', titlesize=18)      # fontsize of the figure title
 
 ################################################################################################
 ################################################################################################
