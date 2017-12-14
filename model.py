@@ -494,7 +494,7 @@ def main():
     ########################################################################################
     # [1] DEFAULT MODEL PERFORMANCE: Train MDP, then test on either dev or test sets
     ########################################################################################
-    if (True):
+    if (False):
 
         # Create train MDP, then train
         print 'Creating Crypto Trading MDP...'
@@ -677,7 +677,7 @@ def main():
     ########################################################################################
     # [6] Checking for convergence
     ########################################################################################
-    if (False):
+    if (True):
 
         # Setup
         cryptoMDP = CryptoTrading(training_data, START_VALUE, HIGH, MEDIUM, LOW)
@@ -692,7 +692,7 @@ def main():
             print '\nTraining for %d iterations...' % iterations
 
             # Train (divide iterations by 3 because doing decaying exploration probabilities)
-            train_results = trainModel(cryptoMDP, FeatureExtractor, START_VALUE, float(iterations / 3.), 
+            train_results = trainModel(cryptoMDP, FeatureExtractor, START_VALUE, int(iterations / 3.), 
                 MULTI_EXPLORE, SINGLE_PROBS, MULTI_PROBS, verbose=False)
             QLAlgo = train_results['QLAlgo']
 
