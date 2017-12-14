@@ -484,17 +484,19 @@ def main():
         training_data_name = 'TrainDev'
         running_data_name = 'Test'
 
-    # Choose number of training iterations (is 3x when using MULTI_EXPLORE)
-    train_iterations = 1000
-
     # Choose training exploration type (constant vs decaying)
     #explore_type = SINGLE_EXPLORE
     explore_type = MULTI_EXPLORE
 
+    # Choose number of training iterations (is 3x when using MULTI_EXPLORE, so adjust if necessary)
+    train_iterations = 3000
+    if (explore_type == MULTI_EXPLORE):
+        train_iterations = int(train_iterations / 3.)
+
     ########################################################################################
     # [1] DEFAULT MODEL PERFORMANCE: Train MDP, then test on either dev or test sets
     ########################################################################################
-    if (False):
+    if (True):
 
         # Create train MDP, then train
         print 'Creating Crypto Trading MDP...'
@@ -582,6 +584,8 @@ def main():
 
         # Loop 5 times
         for i in range(num_trials):
+
+            print 'Beginning trial %d...' % i
 
             # Train
             cryptoMDP = CryptoTrading(training_data, START_VALUE, HIGH, MEDIUM, LOW)
@@ -677,7 +681,7 @@ def main():
     ########################################################################################
     # [6] Checking for convergence
     ########################################################################################
-    if (True):
+    if (False):
 
         # Setup
         cryptoMDP = CryptoTrading(training_data, START_VALUE, HIGH, MEDIUM, LOW)
@@ -696,25 +700,26 @@ def main():
                 MULTI_EXPLORE, SINGLE_PROBS, MULTI_PROBS, verbose=False)
             QLAlgo = train_results['QLAlgo']
 
-            # Save (final reward) and (final reward - second to last reward)
+            # Save final reward and difference between last few rewards
             final_reward = train_results['Final Reward']
             num_rewards = len(train_results['All Rewards'])
-            prior_reward = train_results['All Rewards'][num_rewards - 1]
-            difference = final_reward - prior_reward
-            train_rewards.append((final_reward, difference))
-            print 'Final Train Reward: %.2f, Last Change: %.2f' % (final_reward, difference)
+            prior_reward1 = train_results['All Rewards'][num_rewards - 1]
+            prior_reward2 = train_results['All Rewards'][num_rewards - 2]
+            prior_reward3 = train_results['All Rewards'][num_rewards - 3]
+            difference1 = final_reward - prior_reward1
+            difference2 = prior_reward1 - prior_reward2
+            difference3 = prior_reward2 - prior_reward3
+            train_rewards.append((final_reward, difference1, difference2, difference3))
+            print 'Final Train Reward: %.2f, Last Few Changes: %.2f, %.2f, %.2f' % (final_reward, difference1, difference2, difference3)
 
             # Run
             cryptoMDP.coinData = running_data
             run_results = runModel(cryptoMDP, QLAlgo, FeatureExtractor, START_VALUE, 1, verbose=False)
 
-            # Save (final reward) and (final reward - second to last reward)
+            # Save final reward
             final_reward = run_results['Final Reward']
-            num_rewards = len(run_results['All Rewards'])
-            prior_reward = run_results['All Rewards'][num_rewards - 1]
-            difference = final_reward - prior_reward
-            train_rewards.append((final_reward, difference))
-            print 'Final Run Reward: %.2f, Last Change: %.2f' % (final_reward, difference)
+            run_rewards.append(final_reward)
+            print 'Final Run Reward: %.2f' % (final_reward)
 
 if __name__ == '__main__':
     main()
