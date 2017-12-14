@@ -1,0 +1,23 @@
+Training for 100 iterations...
+Final Train Reward: 332646.56, Last Few Changes: 106705.39, -336856.91, 485413.96
+Final Run Reward: 19005.28
+
+Training for 1000 iterations...
+Final Train Reward: 14840.05, Last Few Changes: 43.21, -1439.80, 2905.68
+Final Run Reward: 12652.75
+
+Training for 5000 iterations...
+Final Train Reward: 13506.40, Last Few Changes: 219.87, 389.01, -2058.79
+Final Run Reward: 13218.41
+
+Training for 10000 iterations...
+Final Train Reward: 14807.68, Last Few Changes: -903.69, -1004.65, -1156.38
+Final Run Reward: 17215.57
+
+Training for 15000 iterations...
+Final Train Reward: 11678.02, Last Few Changes: 1404.64, 191.98, -299.64
+Final Run Reward: 9692.33
+
+Training for 20000 iterations...
+Final Train Reward: 15752.23, Last Few Changes: -3146.07, -1960.13, 2491.82
+Final Run Reward: 17960.01
