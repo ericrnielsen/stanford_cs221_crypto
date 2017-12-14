@@ -484,17 +484,17 @@ def main():
         training_data_name = 'TrainDev'
         running_data_name = 'Test'
 
-    # Choose number of training iterations
+    # Choose number of training iterations (is 3x when using MULTI_EXPLORE)
     train_iterations = 1000
 
-    # Choose training exploration type (constant vs descreasing)
+    # Choose training exploration type (constant vs decaying)
     #explore_type = SINGLE_EXPLORE
     explore_type = MULTI_EXPLORE
 
     ########################################################################################
     # [1] DEFAULT MODEL PERFORMANCE: Train MDP, then test on either dev or test sets
     ########################################################################################
-    if (False):
+    if (True):
 
         # Create train MDP, then train
         print 'Creating Crypto Trading MDP...'
@@ -570,7 +570,7 @@ def main():
     ########################################################################################
     # [4] Run multiple trials, plot each result and average results
     ########################################################################################
-    if (True):
+    if (False):
 
         # Choose how many trials to run
         num_trials = 5
