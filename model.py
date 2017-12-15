@@ -412,8 +412,8 @@ def trainModel(MDP, featureExtractor, startValue, iterations, explore_type, sing
         if verbose: print "Training with exploration probability: %.2f" % prob
         QL_rewards += util_221hw.simulate(MDP, QLAlgo, numTrials = iterations)
 		
-    # Get expected reward
-    QL_expReward = sum(QL_rewards)/float(len(QL_rewards))
+    # Get expected reward (average of last 100 training iterations)
+    QL_expReward = sum(QL_rewards[-100:])/float(100)
     checkpoint_2 = time.time()
     if verbose:
         print 'QL training took ', str(checkpoint_2-start), 'seconds'
@@ -489,7 +489,7 @@ def main():
     explore_type = MULTI_EXPLORE
 
     # Choose number of training iterations (is 3x when using MULTI_EXPLORE, so adjust if necessary)
-    train_iterations = 3000
+    train_iterations = 1000
     if (explore_type == MULTI_EXPLORE):
         train_iterations = int(train_iterations / 3.)
 
@@ -536,34 +536,39 @@ def main():
         run_results = runModel(cryptoMDP, QLAlgo, FeatureExtractor, START_VALUE, 1)
 
         # Plot train results
-        if (True):
+        if (False):
             plot_portfolio(which_data=training_data_name, values=train_results['Portfolio Value Single'], 
                         values_label="Training Set", xlabel="Day", ylabel="Portfolio Value ($US)",
                         title="[Training] Portfolio Value vs. Day")
-        if (True):
+        if (False):
             plot_portfolio(which_data=training_data_name, values=train_results['Portfolio Value All'],
                         values_label="Training Set", xlabel="Day", ylabel="Portfolio Value ($US)",
                         title="[Training] Portfolio Value (All Iterations) vs. Day")
         if (True):
             plot_rewards(which_data=training_data_name, values=train_results['All Rewards'], expected=train_results['Final Reward'],
                         values_label="Final Profit", xlabel="Iterations", ylabel="Final Profit ($US)",
-                        title="[Training] Final Profit vs. Training Iterations")
+                        title=("[Training] Final Profit vs. Training Iterations (Expected Profit: %.2f)" % train_results['Final Reward']))
         if (True):
             plot_portfolio_choice_baseline(which_data=training_data_name, values=train_results['Portfolio Value Single'], 
                         choices=train_results['Daily Choices'], values_label="Final Train Results", 
                         xlabel="Day", ylabel="Portfolio Value ($US)", 
                         title="[Training] Portfolio Value and Largest Coin Investment vs. Day")
+        if (True):
+            plot_portfolio_choice(which_data=training_data_name, values=train_results['Portfolio Value Single'], 
+                        choices=train_results['Daily Choices'], values_label="Final Train Results", 
+                        xlabel="Day", ylabel="Portfolio Value ($US)", 
+                        title="[Training] Portfolio Value and Largest Coin Investment vs. Day")
 
         # Plot run results
-        if (True):
+        if (False):
             plot_portfolio(which_data=running_data_name, values=run_results['Portfolio Value Single'], 
                         values_label="Dev Set", xlabel="Day", ylabel="Portfolio Value ($US)",
-                        title=("[%s] Portfolio Value (of Last Iteration) vs. Day" % run_type))
-        if (True):
+                        title=("[%s] Portfolio Value vs. Day" % run_type))
+        if (False):
             plot_portfolio(which_data=running_data_name, values=run_results['Portfolio Value All'],
                         values_label="Dev Set", xlabel="Day", ylabel="Portfolio Value ($US)",
                         title=("[%s] Portfolio Value (All Iterations) vs. Day" % run_type))
-        if (True):
+        if (False):
             plot_only_choice(which_data=running_data_name, daily_choices=run_results['Daily Choices'], 
                         portfolio_values=run_results['Portfolio Value Single'], 
                         xlabel="Day", ylabel="Portfolio Value ($US)", 
@@ -585,7 +590,7 @@ def main():
         # Loop 5 times
         for i in range(num_trials):
 
-            print 'Beginning trial %d...' % i
+            print 'Beginning trial %d...' % (i + 1)
 
             # Train
             cryptoMDP = CryptoTrading(training_data, START_VALUE, HIGH, MEDIUM, LOW)
