@@ -107,11 +107,16 @@ class CryptoTrading(util_221hw.MDP):
         e_sharpe = tuple(self.coinData['ETH_Sharpe'][:self.startDay+1])
         l_sharpe = tuple(self.coinData['LTC_Sharpe'][:self.startDay+1])   
 
+        b_229 = tuple(self.coinData['229_BTC'][:self.startDay+1])
+        e_229 = tuple(self.coinData['229_ETH'][:self.startDay+1])
+        l_229 = tuple(self.coinData['229_LTC'][:self.startDay+1])  		
+
         state_data = {  'b_price':b_price, 'e_price':e_price, 'l_price':l_price,
                         'b_change':b_change, 'e_change':b_change, 'l_change':b_change,
                         'b_volatility':b_volatility, 'e_volatility':e_volatility, 'l_volatility':l_volatility,
                         'b_volume':b_volume, 'e_volume':e_volume, 'l_volume':l_volume,
-                        'b_sharpe':b_sharpe, 'e_sharpe':e_sharpe, 'l_sharpe':l_sharpe }
+                        'b_sharpe':b_sharpe, 'e_sharpe':e_sharpe, 'l_sharpe':l_sharpe, 
+                        'b_229':b_229, 'e_229':e_229, 'l_229':l_229  }
 
         return (self.startDay, state_data,
                 (startBitcoin, startEthereum, startLitecoin), self.startValue)
@@ -143,6 +148,7 @@ class CryptoTrading(util_221hw.MDP):
         b_volatility, e_volatility, l_volatility = state_data['b_volatility'], state_data['e_volatility'], state_data['l_volatility']
         b_volume, e_volume, l_volume = state_data['b_volume'], state_data['e_volume'], state_data['l_volume']
         b_sharpe, e_sharpe, l_sharpe = state_data['b_sharpe'], state_data['e_sharpe'], state_data['l_sharpe']
+        b_229, e_229, l_229 = state_data['b_229'], state_data['e_229'], state_data['l_229']
         numBitcoin, numEthereum, numLitecoin = num_coins
 
         # Initialize results array, return immediately if end of sim has been reached
@@ -172,6 +178,7 @@ class CryptoTrading(util_221hw.MDP):
         b_volatility, e_volatility, l_volatility = list(b_volatility), list(e_volatility), list(l_volatility)
         b_volume, e_volume, l_volume = list(b_volume), list(e_volume), list(l_volume)
         b_sharpe, e_sharpe, l_sharpe = list(b_sharpe), list(e_sharpe), list(l_sharpe)
+        b_229, e_229, l_229 = list(b_229), list(e_229), list(l_229)
 
         # Remove the oldest data for each data type for each coin, add new data
         b_price.pop(0); e_price.pop(0); l_price.pop(0)
@@ -179,6 +186,7 @@ class CryptoTrading(util_221hw.MDP):
         b_volatility.pop(0); e_volatility.pop(0); l_volatility.pop(0)
         b_volume.pop(0); e_volume.pop(0); l_volume.pop(0)
         b_sharpe.pop(0); e_sharpe.pop(0); l_sharpe.pop(0)
+        b_229.pop(0); e_229.pop(0), l_229.pop(0)
         if current_day + 1 != len(self.coinData['LTC_Price']):
             # Price
             b_price += [self.coinData['BTC_Price'][next_day]]
@@ -200,13 +208,18 @@ class CryptoTrading(util_221hw.MDP):
             b_sharpe += [self.coinData['BTC_Sharpe'][next_day]]
             e_sharpe += [self.coinData['ETH_Sharpe'][next_day]]
             l_sharpe += [self.coinData['LTC_Sharpe'][next_day]]
+            # 229 Output
+            b_229 += [self.coinData['229_BTC'][next_day]]
+            e_229 += [self.coinData['229_ETH'][next_day]]
+            l_229 += [self.coinData['229_LTC'][next_day]]
 
         # Convert price data back to tuple format
         state_data = {  'b_price':tuple(b_price), 'e_price':tuple(e_price), 'l_price':tuple(l_price),
                         'b_change':tuple(b_change), 'e_change':tuple(b_change), 'l_change':tuple(b_change),
                         'b_volatility':tuple(b_volatility), 'e_volatility':tuple(e_volatility), 'l_volatility':tuple(l_volatility),
                         'b_volume':tuple(b_volume), 'e_volume':tuple(e_volume), 'l_volume':tuple(l_volume),
-                        'b_sharpe':tuple(b_sharpe), 'e_sharpe':tuple(e_sharpe), 'l_sharpe':tuple(l_sharpe) }
+                        'b_sharpe':tuple(b_sharpe), 'e_sharpe':tuple(e_sharpe), 'l_sharpe':tuple(l_sharpe),
+                        'b_229':tuple(b_229), 'e_229':tuple(e_229), 'l_229':tuple(l_229)  }
 
         # The first element of action tuple is the highest percentage choice for the day
         # Unpack the action for ease of understanding and use
@@ -318,6 +331,7 @@ def FeatureExtractor(state, action):
     b_volatility, e_volatility, l_volatility = list(state_data['b_volatility']), list(state_data['e_volatility']), list(state_data['l_volatility'])
     b_volume, e_volume, l_volume = list(state_data['b_volume']), list(state_data['e_volume']), list(state_data['l_volume'])
     b_sharpe, e_sharpe, l_sharpe = list(state_data['b_sharpe']), list(state_data['e_sharpe']), list(state_data['l_sharpe'])
+    b_229, e_229, l_229 = list(state_data['b_229']), list(state_data['e_229']), list(state_data['l_229'])
     num_days = len(b_price)
 	
     # Add PRICE features (for past 6 days)
@@ -383,6 +397,14 @@ def FeatureExtractor(state, action):
             features.append(((action, 'b_sharpe'), b_sharpe[i]/sharpe_sum))
             features.append(((action, 'e_sharpe'), e_sharpe[i]/sharpe_sum))
             features.append(((action, 'l_sharpe'), l_sharpe[i]/sharpe_sum))
+			
+    # Add 229 OUTPUT features (prediction of future price change)
+    if (False):
+        feature_range = range(1)
+        for i in feature_range:
+            features.append(((action, 'b_229'), b_229[i]))
+            features.append(((action, 'e_229'), e_229[i]))
+            features.append(((action, 'l_229'), l_229[i]))
 
     return features
 	
