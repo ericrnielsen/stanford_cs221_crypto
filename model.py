@@ -1,3 +1,8 @@
+################################################################################################
+# This code utilized the CS221 Homework 4 "Blackjack" code as a starting point.
+# We heavily modified the code to suit our needs.
+################################################################################################
+
 import util_221hw, math, random, sys
 from collections import defaultdict
 from util_221hw import ValueIteration
